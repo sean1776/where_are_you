@@ -1,0 +1,80 @@
+/**
+ * Copyright (c) 2017 Razeware LLC
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * Notwithstanding the foregoing, you may not use, copy, modify, merge, publish,
+ * distribute, sublicense, create a derivative work, and/or sell copies of the
+ * Software in any work that is designed, intended, or marketed for pedagogical or
+ * instructional purposes related to programming, coding, application development,
+ * or information technology.  Permission for such use, copying, modification,
+ * merger, publication, distribution, sublicensing, creation of derivative works,
+ * or sale is expressly withheld.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+import UIKit
+import GoogleMobileAds //(https://developers.google.com/admob/ios/quick-start)
+
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
+  
+  var window: UIWindow?
+  
+  func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    //UIApplication.shared.statusBarStyle = .default
+    // Initialize the Google Mobile Ads SDK.
+    // Sample AdMob app ID: ca-app-pub-3940256099942544~1458002511
+    GADMobileAds.configure(withApplicationID: "ca-app-pub-3280046000807573~5424696237")
+    //(https://developers.google.com/admob/ios/quick-start)
+    
+    window = UIWindow(frame: UIScreen.main.bounds)
+    window?.rootViewController = UINavigationController(rootViewController: JoinChatViewController())
+    window?.makeKeyAndVisible()
+    return true
+  }
+
+  func applicationDidEnterBackground(_ application: UIApplication) {
+    if (DidUserPressLockButton()) {
+      print("User pressed lock button=====================")
+    } else {
+      print("user pressed home button")
+    }
+  }
+  
+  func applicationDidBecomeActive(_ application: UIApplication) {
+    print("application become alive again..7")
+    let vc1 = window?.rootViewController as? JoinChatViewController
+    let vc2 = window?.rootViewController as? ChatRoomViewController
+    
+    if vc1 != nil {
+      print("using old inputoutput stream because of vc1 != nil")
+      vc1?.chatRoom.reOpenInputOutputStream()
+    } else if vc2 != nil {
+      vc2?.chatRoom.reOpenInputOutputStream()
+      print("using old inputoutput stream because of vc2 != nil")
+    }
+  }
+  
+  func DidUserPressLockButton() -> Bool {
+    let oldBrightness = UIScreen.main.brightness
+    UIScreen.main.brightness = oldBrightness + (oldBrightness <= 0.01 ? (0.01) : (-0.01))
+    return oldBrightness != UIScreen.main.brightness
+  }
+}
+
